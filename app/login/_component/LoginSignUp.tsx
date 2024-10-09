@@ -34,19 +34,20 @@ export default function SignUp() {
                     {action === Action.SIGNUP ? "Login" : "Sign Up"}
                     </button>
                 </div>
+            </form>
+            <div className="flex items-center my-4 w-full mx-auto">
+                <div className="flex-grow border-t border-white"></div>
+                <span className="px-3 text-gray-500 bg-transparent">or</span>
+                <div className="flex-grow border-t border-white"></div>
+            </div>
 
-                <div className="flex items-center my-4">
-                    <div className="flex-grow border-t border-gray-300"></div>
-                    <span className="px-3 text-gray-500 bg-white">or</span>
-                    <div className="flex-grow border-t border-gray-300"></div>
-                </div>
-
-                {/* sign in with google */}
+            {/* sign in with google */}
+            <form className="w-full">
                 <button formAction={signInWithGoogle}
                     className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
                     Sign in with Google
                 </button>
-            </form>
+            </form>      
         </div>
     </>
 }
