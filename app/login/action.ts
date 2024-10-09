@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   const { error, data: signInData } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/error')
+    return { error: error.message }
   }
 
   revalidatePath('/', 'layout')
@@ -37,20 +37,20 @@ export async function signup(formData: FormData) {
   }
 
   const { error, data: signUpData  } = await supabase.auth.signUp(data)
-  
+
   if (error) {
-    console.log('oops! something went wrong')
+    return { error: error.message }
   }
+
+  // Check if the user already exists ( Need to recheck)
+  if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
+    // User already exists, redirect to login page
+    redirect('/login?message=User already exists. Please log in.')
+  }
+
 
   revalidatePath('/', 'layout')
   redirect('/')
-}
-
-// auto created by cursor
-export async function logout() {
-  const supabase = createClient()
-  await supabase.auth.signOut()
-  redirect('/login')
 }
 
 // sign in with google auth 
