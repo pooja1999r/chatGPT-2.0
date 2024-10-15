@@ -6,7 +6,9 @@ import { getUserInfo } from "./utils/action";
 import Dashboard from "./dashboard/_component/ControlPanel";
 import LeftSide from "./_component/LeftSide";
 import Settings from "./_component/Settings";
-import LLMs from "./_component/LLMs";
+import LLMs from "./_component/LLMsModal";
+import { LLMsList, LocalLLmKey } from "./_component/constant";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 export default function Home() {
@@ -24,30 +26,45 @@ export default function Home() {
 
   // check local llm
   const checkLocalLLM = async () => {
-    const llm = localStorage.getItem('llm')
+    const llm = localStorage.getItem(LocalLLmKey)
     if (llm) {
       setSelectedLLM(llm)
     }
   }
 
+
   useEffect(() => {
     getInfo();
     checkLocalLLM();
-  }, [])
+
+    // Add event listener to handle clicks outside the settings popup
+    const handleClickOutside = (e: MouseEvent) => {
+      const settingsElement = document.getElementById('settings-popup');
+      if (isSettingsOpen && settingsElement && !settingsElement.contains(e.target as Node)) {
+        setIsSettingsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSettingsOpen]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <main className="flex-grow">
+    <div className="flex flex-col h-screen w-screen max-h-screen max-w-screen bg-background overflow-hidden">
+      <main className="flex-grow overflow-hidden">
         
         {!isLoading && !user && (
           <>
-            <div className="flex justify-between items-center w-full">
-              <div className="w-1/4 flex justify-center">
+            <div className="flex flex-col md:flex-row justify-between items-center w-full p-4">
+              <div className="w-full md:w-1/4 flex justify-center mb-4 md:mb-0">
                   <LoginSignUp />
               </div>
-              <div className="w-3/4 flex flex-col items-center">
-                <h1 className="text-4xl font-bold mb-4">Welcome Back</h1>
-                <p className="text-xl mb-8">Explore the Power of Various Language Models (LLMs)</p>
+              <div className="w-full md:w-3/4 flex flex-col items-center">
+                <h1 className="text-4xl font-bold mb-4 text-center">Welcome Back</h1>
+                <p className="text-xl mb-8 text-center">Explore the Power of Various Language Models (LLMs)</p>
                 <Image
                     src="/images/ai.jpg"
                     alt="Login/Signup illustration"
@@ -61,15 +78,15 @@ export default function Home() {
         )}
         { !isLoading && user && (
           <>
-            <div className="flex w-full h-full">
+            <div className="flex flex-col md:flex-row w-full h-full">
 
               {/* left side */}
-              <div className="w-64 bg-[#202123] p-4 h-screen">
-                <LeftSide />
+              <div className="w-full md:w-64 bg-[#202123] p-4 md:h-full">
+                <LeftSide selectedLLM={selectedLLM} />
               </div>
 
               {/* right side */}
-              <div className="flex-1 bg-[#343541] p-4 h-screen">
+              <div className="flex-1 bg-[#343541] p-4 md:h-full overflow-hidden">
 
                 {/* avatar and select llm */}
                 <div className="flex justify-between items-center w-full p-4 relative">
@@ -77,21 +94,24 @@ export default function Home() {
                   {/* select llm */}
                   {selectedLLM && (
                     <div className="z-50">
-                      <select
-                        className="bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={(e) => {
-                          setSelectedLLM(e.target.value);
-                          localStorage.setItem('llm', e.target.value);
-                        }}
-                        value={selectedLLM || ''}
-                      >
-                        <option value="">Select LLM</option>
-                        {['GPT-3', 'GPT-4', 'BERT', 'T5', 'RoBERTa', 'XLNet'].map((llm) => (
-                          <option key={llm} value={llm}>
-                            {llm}
-                          </option>
-                        ))}
-                      </select>
+                      <Select onValueChange={(value: LLMsList) => {
+                        setSelectedLLM(value);
+                        localStorage.setItem(LocalLLmKey, value);
+                      }} value={selectedLLM || ''}>
+                        <SelectTrigger className="w-[180px] bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-600 transition-colors duration-200 cursor-pointer">
+                          <SelectValue placeholder="Select LLM" />
+                        </SelectTrigger>  
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Language Models</SelectLabel>
+                            {Object.values(LLMsList).map((llm) => (
+                              <SelectItem key={llm} value={llm}>
+                                {llm}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                   
@@ -123,8 +143,8 @@ export default function Home() {
                 </div>
 
                 {/* LLMs and Dashboard */}
-                <div className="mt-16 px-4">
-                  {!selectedLLM && <LLMs />}
+                <div className="mt-16 px-4 h-[calc(100%-6rem)] overflow-auto">
+                  {!selectedLLM && <LLMs checkLocalLLM={checkLocalLLM} />}
                   {selectedLLM && <Dashboard />}
                 </div>
               </div>
@@ -134,15 +154,12 @@ export default function Home() {
         )}
 
         {isLoading && (
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center h-full">
             <div className="spinner"></div>
           </div>
         )}
         
       </main>
-      <footer className="mt-8 text-sm text-gray-500">
-        © 2024 Our App. All rights reserved.
-      </footer>
     </div>
   );
 }

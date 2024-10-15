@@ -35,3 +35,8 @@ export const LLMsDescription = {
 } as const satisfies Record<LLMsList, { image: string; description: string }>
 
 export const LocalLLmKey = 'local_llm'
+
+export enum LeftSideItems {
+    GPTs = 'GPTs',
+    ADD_CHAT = 'Chats',
+}

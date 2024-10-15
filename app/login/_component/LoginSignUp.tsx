@@ -34,51 +34,68 @@ export default function SignUp() {
 
     return <>
         <div className="flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-bold mb-4">Let's {action === Action.SIGNUP ? 'Sign Up' : 'Login'} to Enjoy LLM's</h1>
-            <form>
-                {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-                <input id="email" name="email" type="email" required  placeholder="Email" 
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 text-black" 
-                onChange={(e) => setEmail(e.target.value)}
-                />
-                <input id="password" name="password" type="password" required  placeholder="Password"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 text-black" 
-                onChange={(e) => setPassword(e.target.value)}
-                />
-
-                {/* sign up or login */}
-                <button formAction={handleAction} onClick={handleLoading}
-                    className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out mb-4 flex items-center justify-center">
-                    {isLoading && <Spinner />}
-                    {action === Action.SIGNUP ? 'Sign up' : 'Login'}
-                </button>
-
+            <div className="text-center w-1/2">
+                <h1 className="text-2xl font-bold mb-4">Let's {action === Action.SIGNUP ? 'Sign Up' : 'Login'} to Enjoy LLM's</h1>
+                <form>
+                    {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+                    <div className="mb-4">
+                        <input 
+                            id="email" 
+                            name="email" 
+                            type="email" 
+                            required  
+                            placeholder="Email" 
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <input 
+                            id="password" 
+                            name="password" 
+                            type="password" 
+                            required  
+                            placeholder="Password"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <button 
+                        formAction={handleAction} 
+                        onClick={handleLoading}
+                        className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out mb-4 flex items-center justify-center"
+                    >
+                        {isLoading && <Spinner />}
+                        {action === Action.SIGNUP ? 'Sign up' : 'Login'}
+                    </button>
+                </form>
                 <div className="mt-4 text-center flex items-center justify-center"> 
                     <p>
-                    {action === Action.LOGIN ? "Don't have an account?" : "Already have an account?"}
+                        {action === Action.LOGIN ? "Don't have an account?" : "Already have an account?"}
                     </p>
                     <button 
-                    className="text-blue-500 ml-2 hover:underline"
-                    onClick={() => setAction(action === Action.SIGNUP ? Action.LOGIN : Action.SIGNUP)}
+                        className="text-blue-500 ml-2 hover:underline"
+                        onClick={() => setAction(action === Action.SIGNUP ? Action.LOGIN : Action.SIGNUP)}
                     >
-                    {action === Action.SIGNUP ? "Login" : "Sign Up"}
+                        {action === Action.SIGNUP ? "Login" : "Sign Up"}
                     </button>
                 </div>
-            </form>
-            <div className="flex items-center my-4 w-full mx-auto">
-                <div className="flex-grow border-t border-white"></div>
-                <span className="px-3 text-gray-500 bg-transparent">or</span>
-                <div className="flex-grow border-t border-white"></div>
+                <div className="flex items-center my-4 w-full">
+                    <div className="flex-grow border-t border-black"></div>
+                    <span className="px-3 text-gray-500 bg-transparent">or</span>
+                    <div className="flex-grow border-t border-black"></div>
+                </div>
+                <form className="w-full">
+                    <button 
+                        formAction={signInWithGoogle} 
+                        onClick={() => setIsLoadingGoogleAuth(true)}
+                        className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out mb-4 flex items-center justify-center"
+                    >
+                        {isLoadingGoogleAuth && <Spinner />}
+                        Sign in with Google
+                    </button>
+                </form>
             </div>
-
-            {/* sign in with google */}
-            <form className="w-full">
-                <button formAction={signInWithGoogle} onClick={() => setIsLoadingGoogleAuth(true)}
-                    className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out mb-4 flex items-center justify-center">
-                    {isLoadingGoogleAuth && <Spinner />}
-                    Sign in with Google
-                </button>
-            </form>      
         </div>
     </>
 }

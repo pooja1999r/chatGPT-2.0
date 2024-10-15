@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { LLMsList, LLMsDescription, LocalLLmKey } from "./constant";
-import { useRouter } from "next/navigation";
-export default function LLMs() {
+import { LLMsList, LocalLLmKey } from "./constant";
+
+export default function LLMsModal({checkLocalLLM}: {checkLocalLLM: () => void}) {
     const [selectedLLM, setSelectedLLM] = useState('');
-    const router = useRouter();
 
     const handleLLMClick = (llm: LLMsList) => {
         localStorage.setItem(LocalLLmKey, llm);
         setSelectedLLM(llm);
-        router.push('/dashboard');
+        checkLocalLLM();
     }
 
 
