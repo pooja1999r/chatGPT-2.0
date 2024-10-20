@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
-import { LeftSideItems, LLMsList } from "./constant"
+import { LastChatKey, LeftSideItems, LLMsList } from "./constant"
 import { useRouter } from "next/navigation"
 import { getChats } from "../db/action"
+import { getLastChat } from "./service"
 
 
 
@@ -13,7 +14,9 @@ export default function LeftSide({selectedLLM}: {selectedLLM?: string}) {
     const handleNavItem = (item: LeftSideItems) => {
         setSelectedItem(item)
         if(item === LeftSideItems.ADD_CHAT) {
-            router.push('/dashboard/chats')
+            const lastChatId = getLastChat();
+            const path = lastChatId ? `/dashboard/chats/${lastChatId}` : '/dashboard/chats';
+            router.push(path)
         } else {
             router.push('/dashboard/gpts')
         }
@@ -21,7 +24,6 @@ export default function LeftSide({selectedLLM}: {selectedLLM?: string}) {
 
     const getDBChats = async () => {
         const data = await getChats()
-        console.log(data);
         setChats(data);
     }
 
@@ -30,9 +32,16 @@ export default function LeftSide({selectedLLM}: {selectedLLM?: string}) {
     }
 
     useEffect(() => {
-        selectedLLM ? handleNavItem(LeftSideItems.ADD_CHAT) : handleNavItem(LeftSideItems.GPTs);
         getDBChats();
-    }, [selectedLLM])
+    }, []); // Run only once on component mount
+
+    useEffect(() => {
+        if (selectedLLM) {
+            handleNavItem(LeftSideItems.ADD_CHAT);
+        } else {
+            handleNavItem(LeftSideItems.GPTs);
+        }
+    }, [selectedLLM]); // Run when selectedLLM changes
 
     return (
         <div className="text-white">

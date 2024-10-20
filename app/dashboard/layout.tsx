@@ -3,11 +3,12 @@ import { usePathname, useRouter } from "next/navigation"; // Change this import
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { getUserInfo } from "../utils/action";
-import { LLMsList, LocalLLmKey } from "../_component/constant";
+import { LLMsList} from "../_component/constant";
 import LeftSide from "../_component/LeftSide";
 import Settings from "../_component/Settings";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import LLMsModal from "../_component/LLMsModal";
+import { getLocalLLM, setLocalLLM } from "../_component/service";
 
 export default function DashboardLayout({
     children,
@@ -35,9 +36,14 @@ export default function DashboardLayout({
     }
   
     useEffect(() => {
-      getInfo();
-      checkLocalLLM();
 
+      // get User logged in
+      getInfo();
+
+      // set the selected llm
+      setSelectedLLM( getLocalLLM()|| '');
+
+      // close the settings when clicking outside
       const handleClickOutside = (e: MouseEvent) => {
         if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
           setIsSettingsOpen(false);
@@ -52,13 +58,6 @@ export default function DashboardLayout({
 
     }, [])
   
-    // check local llm
-    const checkLocalLLM = async () => {
-      const llm = localStorage.getItem(LocalLLmKey)
-      if (llm) {
-        setSelectedLLM(llm)
-      }
-    }
   
     return (
       <>
@@ -85,7 +84,7 @@ export default function DashboardLayout({
                     {selectedLLM && (
                       <Select onValueChange={(value: LLMsList) => {
                         setSelectedLLM(value);
-                        localStorage.setItem(LocalLLmKey, value);
+                        setLocalLLM(value);
                       }} value={selectedLLM || ''}>
                         <SelectTrigger className="w-[180px] bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-600 transition-colors duration-200 cursor-pointer">
                           <SelectValue placeholder="Select LLM" />
@@ -132,7 +131,7 @@ export default function DashboardLayout({
                 </div>
                 {/* LLMs and Dashboard */}
                 <div className="flex-1 px-4 overflow-y-auto">
-                  {!selectedLLM && currentPath === '/dashboard/gpts' && <LLMsModal checkLocalLLM={checkLocalLLM} />}
+                  {(!selectedLLM || currentPath === '/dashboard/gpts') && <LLMsModal setSelectedLLM={setSelectedLLM} />}
                   {currentPath !== '/dashboard/gpts' && children}
                 </div>
               </div>

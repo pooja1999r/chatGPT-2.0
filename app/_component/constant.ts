@@ -87,6 +87,8 @@ export const LLMsDescription = {
 
 export const LocalLLmKey = 'local_llm'
 
+export const LastChatKey = 'last_chat'
+
 export enum LeftSideItems {
     GPTs = 'GPTs',
     ADD_CHAT = 'Chats',

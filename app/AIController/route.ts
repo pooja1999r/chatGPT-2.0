@@ -10,16 +10,32 @@ const openai = new OpenAI({ apiKey: apiKey });
 export async function POST(req: Request) {
     try {
         const body = await req.text();
-        console.log('Received body:', body);
         
         const { question } = JSON.parse(body);
-        console.log('Parsed question:', question);
 
         if (!question) {
             return new Response(JSON.stringify({ error: 'No question provided' }), { status: 400 });
         }
+        // First, generate a chat name
+        const chatNameResponse = await openai.chat.completions.create({
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a helpful assistant. Generate a short, catchy name for this chat based on the user's question.",
+                },
+                {
+                    role: "user",
+                    content: `Generate a chat name for this question: ${question}`,
+                },
+            ],
+            model: "gpt-3.5-turbo",
+            max_tokens: 20,
+        });
 
-        const response = await openai.chat.completions.create({
+        const chatName = chatNameResponse.choices[0].message.content?.trim();
+
+        // Then, generate the answer to the user's question
+        const answerResponse = await openai.chat.completions.create({
             messages: [
                 {
                     role: "system",
@@ -33,6 +49,16 @@ export async function POST(req: Request) {
             model: "gpt-3.5-turbo",
             max_tokens: 300,
         });
+
+        const answer = answerResponse.choices[0].message.content?.trim();
+
+        const response = {
+            name: chatName,
+            id: answerResponse.id,
+            answer: answer,
+            sender_id: answerResponse.choices[0].message.role,
+            model: answerResponse.model,
+        };
 
         return new Response(JSON.stringify(response));
     } catch (error) {

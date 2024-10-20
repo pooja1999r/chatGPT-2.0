@@ -1,12 +1,22 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { getUserInfo } from "./utils/action";
 
 export default function Home() {
   const router = useRouter()
 
-  useEffect(() => {
+  const getUser = async() =>{
+    const user = await getUserInfo()
+    if(!user) {
+      router.push('/login')
+      return
+    }
     router.push('/dashboard')
+  }
+
+  useEffect(() => {
+    getUser();
   }, [])
 
   return (

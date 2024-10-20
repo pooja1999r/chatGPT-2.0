@@ -6,9 +6,24 @@ export async function getChats() {
     return chats
 }
 
-export async function getMessages() {
-    const { data: messages } = await supabase.from("messages").select();
+export async function addChat(chat: any) {
+    const { data: chatData } = await supabase.from("chats").insert(chat);
+    return chatData
+}
+
+export async function updateChatName(chatId: string, chatName: string) {
+    const { data: chatData } = await supabase.from("chats").update({ chat_name: chatName }).eq("chat_id", chatId);
+    return chatData
+}
+
+export async function getMessagesByChatId(chatId: string) {
+    const { data: messages } = await supabase.from("message").select().eq("chat_id", chatId);
     return messages
+}
+
+export async function addMessage(message: any) {
+    const { data: messageData } = await supabase.from("message").insert(message);
+    return messageData
 }
 
 export async function postChatGetAIResponse(question: string) {

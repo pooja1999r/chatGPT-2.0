@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { LLMsDescription, LLMsList, LocalLLmKey } from "./constant";
+import { LLMsDescription, LLMsList } from "./constant";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { setLocalLLM } from "./service";
 
-export default function LLMsModal({checkLocalLLM}: {checkLocalLLM?: () => void}) {
-    const [selectedLLM, setSelectedLLM] = useState('');
+export default function LLMsModal({setSelectedLLM}: {setSelectedLLM?: (llm: string) => void}) {
+    const [selectLLM, setSelectLLM] = useState('');
 
     const handleLLMClick = (llm: LLMsList) => {
-        localStorage.setItem(LocalLLmKey, llm);
-        setSelectedLLM(llm);
-        checkLocalLLM && checkLocalLLM();
+        setSelectLLM(llm);
+        setSelectedLLM && setSelectedLLM(llm);
+        setLocalLLM(llm);
     }
 
     return (

@@ -1,5 +1,5 @@
-import ChatFile from "../chatFile";
+import ChatHolder from "./chatHolder";
 
 export default function ChatPage() {
-    return <ChatFile />
+    return <ChatHolder />
 }   

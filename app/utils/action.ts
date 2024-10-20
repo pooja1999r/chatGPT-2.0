@@ -1,8 +1,9 @@
+import { useCallback } from "react"
 import { createClient } from "./supabase/client"
 
 const supabase = createClient()
 
-export const getUserInfo = async () => {
+export const getUserInfo =  async () => {
     const { data: { user }  } = await supabase.auth.getUser()
     return user
 }
