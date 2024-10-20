@@ -1,26 +1,37 @@
 import { useEffect, useState } from "react"
 import { LeftSideItems, LLMsList } from "./constant"
+import { useRouter } from "next/navigation"
+import { getChats } from "../db/action"
 
 
 
-export default function LeftSide({selectedLLM}: {selectedLLM: string}) {
+export default function LeftSide({selectedLLM}: {selectedLLM?: string}) {
     const [selectedItem, setSelectedItem] = useState(LeftSideItems.GPTs)
+    const [chats, setChats] = useState<any[] | null>([])
+    const router = useRouter()
 
-    const handleGPTs = () => {
-        setSelectedItem(LeftSideItems.GPTs)
+    const handleNavItem = (item: LeftSideItems) => {
+        setSelectedItem(item)
+        if(item === LeftSideItems.ADD_CHAT) {
+            router.push('/dashboard/chats')
+        } else {
+            router.push('/dashboard/gpts')
+        }
     }
 
-    const handleChats = () => {
-        setSelectedItem(LeftSideItems.ADD_CHAT)
+    const getDBChats = async () => {
+        const data = await getChats()
+        console.log(data);
+        setChats(data);
+    }
+
+    const handleChat = (chat_id: string) => {
+        router.push(`/dashboard/chats/${chat_id}`)
     }
 
     useEffect(() => {
-        // Initialize with "Home" selected
-        if(selectedLLM) {
-            setSelectedItem(LeftSideItems.ADD_CHAT)
-        } else {
-            setSelectedItem(LeftSideItems.GPTs)
-        }
+        selectedLLM ? handleNavItem(LeftSideItems.ADD_CHAT) : handleNavItem(LeftSideItems.GPTs);
+        getDBChats();
     }, [selectedLLM])
 
     return (
@@ -29,17 +40,25 @@ export default function LeftSide({selectedLLM}: {selectedLLM: string}) {
             <nav>
                 <ul className="space-y-2">
                     <li className={`rounded-md transition-colors duration-200 ${selectedItem === LeftSideItems.GPTs ? "bg-gray-700" : "hover:bg-gray-700"}`}>
-                        <span className="block px-4 py-2 cursor-pointer" onClick={() => setSelectedItem(LeftSideItems.GPTs)}>{LeftSideItems.GPTs}</span>
+                        <span className="block px-4 py-2 cursor-pointer" onClick={() => handleNavItem(LeftSideItems.GPTs)}>{LeftSideItems.GPTs}</span>
                     </li>
                     <li className={`rounded-md transition-colors duration-200 ${selectedItem === LeftSideItems.ADD_CHAT ? "bg-gray-700" : "hover:bg-gray-700"}`}>
-                        <span className="block px-4 py-2 cursor-pointer" onClick={() => setSelectedItem(LeftSideItems.ADD_CHAT)}>{LeftSideItems.ADD_CHAT}</span>
+                        <span className="block px-4 py-2 cursor-pointer" onClick={() => handleNavItem(LeftSideItems.ADD_CHAT)}>{LeftSideItems.ADD_CHAT}</span>
                     </li>
                 </ul>
                 <h2 className="text-xl font-semibold mt-4 mb-2">Language Models</h2>
                 <ul className="space-y-2">
-                    {Object.values(LLMsList).map((llm) => (
-                        <li key={llm} className="rounded-md transition-colors duration-200 hover:bg-gray-700">
-                            <span className="block px-4 py-2">{llm}</span>
+                    {chats && chats.map((chat) => (
+                        <li key={chat.chat_id} className="rounded-md transition-colors duration-200 hover:bg-gray-700">
+                            <span 
+                                className="flex items-center px-4 py-2 cursor-pointer"
+                                onClick={() => handleChat(chat.chat_id)}
+                            >
+                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                </svg>
+                                {chat.chat_name}
+                            </span>
                         </li>
                     ))}
                 </ul>

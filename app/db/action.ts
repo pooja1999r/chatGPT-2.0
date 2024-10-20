@@ -1,24 +1,29 @@
 import { createClient } from '../utils/supabase/client'
-const supabase = createClient()
+const supabase = createClient();
 
-export const getAllPerviousChats = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats`, {
-        cache: 'no-store',
-    })
-    return res.json()
+export async function getChats() {
+    const { data: chats } = await supabase.from("chats").select();
+    return chats
 }
 
-export default async function Posts() {
-    let { data, error } = await supabase
-    .from('notes')
-    .select(); // Select all columns
+export async function getMessages() {
+    const { data: messages } = await supabase.from("messages").select();
+    return messages
+}
 
-    if (error) {
-        console.error('Error fetching data:', error);
+export async function postChatGetAIResponse(question: string) {
+    const response = await fetch("/AIController", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question }),
+    });
+
+    if (!response.ok) {
+        console.error('Error:', response.status, response.statusText);
         return;
     }
 
-    console.log('Fetched notes:', data);
-  }
-  
-  
+    return await response.json();
+}

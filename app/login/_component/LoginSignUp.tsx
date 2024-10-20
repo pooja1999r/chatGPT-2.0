@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { signup, login, signInWithGoogle } from "../action";
 import { Action } from "./constant";
-import { Spinner } from "@/app/_component/Spinner";
+import { Spinner } from "../../_component/Spinner";
 
 export default function SignUp() {
     const [action, setAction] = useState(Action.LOGIN);
@@ -26,7 +26,6 @@ export default function SignUp() {
         formData.set('email', email);
         formData.set('password', password);
         act(formData).then((data) => {
-            console.log(data.error)
             setIsLoading(false);
             setError(data.error ?? 'Invalid credentials. Please try again.');
         });

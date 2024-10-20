@@ -1,9 +1,10 @@
-import ControlPanel from "./_component/ControlPanel";
+
+import Chats from "./chats/page";
 
 export default function Dashboard() {
     return (
-        <div>
-            <ControlPanel />
+        <div className="h-full">
+            <Chats />
         </div>
     )
 }
