@@ -131,7 +131,7 @@ export default function DashboardLayout({
                 </div>
                 {/* LLMs and Dashboard */}
                 <div className="flex-1 px-4 overflow-y-auto">
-                  {(!selectedLLM || currentPath === '/dashboard/gpts') && <LLMsModal setSelectedLLM={setSelectedLLM} />}
+                  {(!selectedLLM && currentPath === '/dashboard/gpts') && <LLMsModal setSelectedLLM={setSelectedLLM} />}
                   {currentPath !== '/dashboard/gpts' && children}
                 </div>
               </div>

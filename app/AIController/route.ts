@@ -39,7 +39,7 @@ export async function POST(req: Request) {
             messages: [
                 {
                     role: "system",
-                    content: "You are a helpful assistant who supports Liverpool FC",
+                    content: "You are a helpful assistant who answers questions.",
                 },
                 {
                     role: "user",

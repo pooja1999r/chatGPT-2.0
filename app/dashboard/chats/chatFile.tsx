@@ -19,17 +19,20 @@ export default function ChatFile() {
             const inputValue = element.value;
             element.value = '';
             const chatId = generateUUID();
+            const messageId = generateUUID();
 
             // set the question 
             setQuestions(inputValue);
 
             // chat with AI
-           chatWithAI(inputValue, chatId).then((res) => {
+           chatWithAI(inputValue, chatId, messageId).then((res) => {
             setResponse(res as any);
            });
 
+           //    
+
             // store the chat and the message
-            storeUserChat(inputValue, chatId);
+            storeUserChat(inputValue, chatId, messageId);
 
             // set the last chat
             setLastChat(chatId);

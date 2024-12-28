@@ -1,3 +1,4 @@
+import { LLMsList } from "@/app/_component/constant";
 import { getLocalLLM } from "@/app/_component/service";
 import { addChat, addMessage, updateChatName } from "@/app/db/action";
 import { generateUUID } from "@/app/db/uuidGenerate";
@@ -21,7 +22,7 @@ const getChatParams = (chatId: string, userEmail: string | undefined, chatName?:
     }
 }
 
-export const storeUserChat = (inputValue: string, chatId: string) =>{
+export const storeUserChat = (inputValue: string, chatId: string, messageId: string) =>{
     getUserInfo().then((user) => {
 
         // store the chat
@@ -29,25 +30,26 @@ export const storeUserChat = (inputValue: string, chatId: string) =>{
         addChat(chatParams);
 
         // store the question
-        const messageParams = getMessageParams(chatId, inputValue, SenderType.USER);
+        const messageParams = getMessageParams(chatId, inputValue, SenderType.USER, messageId);
         addMessage(messageParams);
     })  
 }
 
-const getMessageParams = (chatId: string, inputValue: string, senderType: SenderType) => {
+const getMessageParams = (chatId: string, inputValue: string, senderType: SenderType, messageId: string) => {
 
     return {
         chat_id: chatId,
-        message_id: generateUUID(),
+        message_id: messageId,
         message_text: inputValue,
         sender_type: senderType,
-        sender_id: getLocalLLM(),
+        sender_id: getLocalLLM() || LLMsList.GPT3,
         message_type: 'text',
         timestamp: epochTime(),
+        // user_id: getUserInfo()?.email,
     }
 }
 
-export const chatWithAI = async (value: string, chatId: string) => {
+export const chatWithAI = async (value: string, chatId: string, messageId: string) => {
     const data = await fetch('/AIController', {
         method: 'POST',
         body: JSON.stringify({ question: value }),
@@ -58,7 +60,7 @@ export const chatWithAI = async (value: string, chatId: string) => {
     updateChatName(chatId, res.name);
 
     // store the response
-    const messageParams = getMessageParams(chatId, res.answer, SenderType.BOT);
+    const messageParams = getMessageParams(chatId, res.answer, SenderType.BOT, messageId);
     addMessage(messageParams)
 
 

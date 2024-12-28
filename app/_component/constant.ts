@@ -92,4 +92,5 @@ export const LastChatKey = 'last_chat'
 export enum LeftSideItems {
     GPTs = 'GPTs',
     ADD_CHAT = 'Chats',
+    SELECTED_CHAT_ID = 'chat_id_'
 }
