@@ -2,7 +2,7 @@
 import { usePathname, useRouter } from "next/navigation"; // Change this import
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
-import { getUserInfo } from "../utils/action";
+import { getUserInfo } from "../utils/serverAction";
 import { LLMsList} from "../_component/constant";
 import LeftSide from "../_component/LeftSide";
 import Settings from "../_component/Settings";

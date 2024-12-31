@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { logout } from "../utils/action"
+import { logout } from "../utils/serverAction"
 import { useRouter } from "next/navigation"
 
 export default function Settings() {

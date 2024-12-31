@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { getUserInfo } from "./utils/action";
+import { getUserInfo } from "./utils/serverAction";
 
 export default function Home() {
   const router = useRouter()
@@ -20,7 +20,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-background">
+    <div className="container">
       <main className="flex-1 w-full">
       </main>
     </div>

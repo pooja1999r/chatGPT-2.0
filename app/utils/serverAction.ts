@@ -1,4 +1,3 @@
-import { useCallback } from "react"
 import { createClient } from "./supabase/client"
 
 const supabase = createClient()

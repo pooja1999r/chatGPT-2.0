@@ -11,12 +11,12 @@ export async function login(formData: FormData) {
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
-  const data = {
+  const inputData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
 
-  const { error, data: signInData } = await supabase.auth.signInWithPassword(data)
+  const { error, data: signInData } = await supabase.auth.signInWithPassword(inputData)
 
   if (error) {
     return { error: error.message }
@@ -31,21 +31,21 @@ export async function signup(formData: FormData) {
   const supabase = createClient()
   // type-casting here for convenience
   // in practice, you should validate your inputs
-  const data = {
+  const inputData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
 
-  const { error, data: signUpData  } = await supabase.auth.signUp(data)
+  const { error, data: signUpData  } = await supabase.auth.signUp(inputData)
 
   if (error) {
     return { error: error.message }
   }
 
   // Check if the user already exists ( Need to recheck)
-  if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
+  if (signUpData.user && signUpData.user.identities?.length === 0) {
     // User already exists, redirect to login page
-    redirect('/login?message=User already exists. Please log in.')
+    return { error:  'User already exists. Please Login'}
   }
 
 

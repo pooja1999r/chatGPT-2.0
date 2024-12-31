@@ -7,94 +7,98 @@ export default function SignUp() {
     const [action, setAction] = useState(Action.LOGIN);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingGoogleAuth, setIsLoadingGoogleAuth] = useState(false);
-    const [error, setError] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleLoading = () =>{
-        if(!email || !password){
-            setIsLoading(false);
-            setError('Please enter your email and password');
-            return;
-        }
-        setIsLoading(true);
-    }
+    const [formInputData, setFormInoutData] = useState({
+        email: '',
+        password: '',
+        error: ''
+    })
 
     const handleAction = () =>{
+        if(!formInputData.email || !formInputData.password || isLoading){
+            return; 
+        }
+        setIsLoading(true);
         const act = action === Action.SIGNUP ? signup : login
         const formData = new FormData();
-        formData.set('email', email);
-        formData.set('password', password);
+
+        formData.set('email', formInputData.email);
+        formData.set('password', formInputData.password);
         act(formData).then((data) => {
             setIsLoading(false);
-            setError(data.error ?? 'Invalid credentials. Please try again.');
+            data?.error && setFormInoutData({...formInputData, error: data.error ?? 'Invalid credentials. Please try again.' })
         });
     }
 
+    const onFormInputChange = (e: any) =>{
+        const {name, value} = e.target;
+        
+        setFormInoutData(
+            {...formInputData, 
+            [name]: value, error: ''}   
+        )
+    }
+
     return <>
-        <div className="flex flex-col items-center justify-center">
-            <div className="text-center w-1/2">
-                <h1 className="text-2xl font-bold mb-4">Let's {action === Action.SIGNUP ? 'Sign Up' : 'Login'} to Enjoy LLM's</h1>
-                <form>
-                    {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-                    <div className="mb-4">
-                        <input 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            required  
-                            placeholder="Email" 
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <input 
-                            id="password" 
-                            name="password" 
-                            type="password" 
-                            required  
-                            placeholder="Password"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                    <button 
-                        formAction={handleAction} 
-                        onClick={handleLoading}
-                        className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out mb-4 flex items-center justify-center"
-                    >
-                        {isLoading && <Spinner />}
-                        {action === Action.SIGNUP ? 'Sign up' : 'Login'}
-                    </button>
-                </form>
-                <div className="mt-4 text-center flex items-center justify-center"> 
-                    <p>
-                        {action === Action.LOGIN ? "Don't have an account?" : "Already have an account?"}
-                    </p>
-                    <button 
-                        className="text-blue-500 ml-2 hover:underline"
-                        onClick={() => setAction(action === Action.SIGNUP ? Action.LOGIN : Action.SIGNUP)}
-                    >
-                        {action === Action.SIGNUP ? "Login" : "Sign Up"}
-                    </button>
-                </div>
-                <div className="flex items-center my-4 w-full">
-                    <div className="flex-grow border-t border-black"></div>
-                    <span className="px-3 text-gray-500 bg-transparent">or</span>
-                    <div className="flex-grow border-t border-black"></div>
-                </div>
-                <form className="w-full">
-                    <button 
-                        formAction={signInWithGoogle} 
-                        onClick={() => setIsLoadingGoogleAuth(true)}
-                        className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out mb-4 flex items-center justify-center"
-                    >
-                        {isLoadingGoogleAuth && <Spinner />}
-                        Sign in with Google
-                    </button>
-                </form>
+        <div className="signup-container">
+            <h1 className="title2">{action === Action.SIGNUP ? 'Create your account' : 'Welcome back'}</h1>
+            <form>
+                {formInputData.error && <p>{formInputData.error}</p>}
+               
+                <input 
+                    id="email" 
+                    type="email" 
+                    name="email"
+                    required  
+                    placeholder="Email" 
+                    onChange={onFormInputChange}
+                />
+        
+                <input 
+                    id="password" 
+                    type="password" 
+                    name="password"
+                    required  
+                    placeholder="Password"
+                    onChange={onFormInputChange}
+                />
+                <button style={{ marginTop: '10px'}}
+                    formAction={handleAction}
+                    onClick={handleAction}
+                    className="primary-button"
+                >
+                    {isLoading && <Spinner />}
+                    {action === Action.SIGNUP ? 'Sign up' : 'Login'}
+                </button>
+            </form>
+            <div className="flex-center-column" style={{ marginTop: '10px'}} > 
+                <span>
+                    {action === Action.LOGIN ? "Don't have an account?" : "Already have an account?"}
+                </span>
+                <button 
+                    style={{
+                        marginLeft: '5px'
+                    }}
+                    type="button"
+                    className="text-link"
+                    onClick={() => setAction(action === Action.SIGNUP ? Action.LOGIN : Action.SIGNUP)}
+                >
+                    {action === Action.SIGNUP ? " Login" : " Sign Up"}
+                </button>
             </div>
+            <div className="horizontal-line-container">
+                <div className="horizontal-line"></div>
+                <span style={{padding: '0px 10px', color: 'rgb(69, 69, 69)'}}>or</span>
+                <div className="horizontal-line"></div>
+            </div>
+            <form className="w-full">
+                <button 
+                    formAction={signInWithGoogle} 
+                    onClick={() => setIsLoadingGoogleAuth(true)}
+                    className="primary-button">
+                    {isLoadingGoogleAuth && <Spinner />}
+                    Sign in with Google
+                </button>
+            </form>
         </div>
     </>
 }

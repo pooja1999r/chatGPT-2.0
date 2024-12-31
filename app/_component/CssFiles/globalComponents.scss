@@ -1,0 +1,29 @@
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+$primary-gray-color: #f5f5f5;
+
+
+
+@mixin respond-to($breakpoint) {
+    @if $breakpoint <= $breakpoint-sm {
+      @media (max-width: #{$breakpoint-sm}) { @content; }
+    } @else if $breakpoint <= $breakpoint-md{
+      @media (max-width: #{$breakpoint-md}) { @content; }
+    } @else if $breakpoint <= $breakpoint-lg {
+      @media (max-width: #{$breakpoint-lg}) { @content; }
+    } @else if $breakpoint > $breakpoint-lg{
+      @media (max-width: #{$breakpoint-xl}) { @content; }
+    }
+  }
+
+  @mixin flex-center-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
